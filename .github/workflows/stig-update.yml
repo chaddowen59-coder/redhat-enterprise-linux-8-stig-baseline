@@ -1,0 +1,171 @@
+name: Check for STIG Updates
+
+on:
+  schedule:
+    # Every Monday at 08:00 UTC
+    - cron: '0 8 * * 1'
+  workflow_dispatch:
+    inputs:
+      force_version:
+        description: 'Force a specific version (e.g. V2R8). Leave blank to auto-detect.'
+        required: false
+
+jobs:
+  check-version:
+    name: Poll cyber.mil for new STIG release
+    runs-on: ubuntu-latest
+    outputs:
+      update_available: ${{ steps.check.outputs.update_available }}
+      new_version: ${{ steps.check.outputs.new_version }}
+      download_url: ${{ steps.check.outputs.download_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check out stig-automation scripts
+        uses: actions/checkout@v4
+        with:
+          repository: anchore/stig-automation
+          path: stig-automation
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Check for new version
+        id: check
+        run: |
+          if [ -n "${{ github.event.inputs.force_version }}" ]; then
+            echo "update_available=true"  >> $GITHUB_OUTPUT
+            echo "new_version=${{ github.event.inputs.force_version }}" >> $GITHUB_OUTPUT
+            echo "download_url=" >> $GITHUB_OUTPUT
+          else
+            set +e
+            # --quiet: version goes to stdout, URL goes to stderr
+            NEW_VER=$(python3 stig-automation/check-stig-version.py --quiet --baseline baseline 2>/dev/null)
+            EXIT=$?
+            URL=$(python3 stig-automation/check-stig-version.py --quiet --baseline baseline 2>&1 >/dev/null \
+                  | grep -oP 'https://[^\s]+\.zip' | head -1)
+            set -e
+            if [ $EXIT -eq 1 ]; then
+              echo "update_available=true"   >> $GITHUB_OUTPUT
+              echo "new_version=${NEW_VER}"  >> $GITHUB_OUTPUT
+              echo "download_url=${URL}"     >> $GITHUB_OUTPUT
+            elif [ $EXIT -eq 0 ]; then
+              echo "Already up to date."
+              echo "update_available=false"  >> $GITHUB_OUTPUT
+            else
+              echo "::warning::Could not determine STIG version from cyber.mil"
+              echo "update_available=false"  >> $GITHUB_OUTPUT
+            fi
+          fi
+
+  apply-update:
+    name: Apply update and open PR
+    needs: check-version
+    if: needs.check-version.outputs.update_available == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    env:
+      NEW_VERSION: ${{ needs.check-version.outputs.new_version }}
+      DOWNLOAD_URL: ${{ needs.check-version.outputs.download_url }}
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Check out stig-automation scripts
+        uses: actions/checkout@v4
+        with:
+          repository: anchore/stig-automation
+          path: stig-automation
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Configure git
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Create update branch
+        run: |
+          BRANCH="stig-update/${NEW_VERSION,,}"
+          git checkout -b "$BRANCH"
+          echo "BRANCH=$BRANCH" >> $GITHUB_ENV
+
+      - name: Apply STIG update
+        run: |
+          python3 stig-automation/apply-stig-update.py \
+            --url     "$DOWNLOAD_URL" \
+            --profile . \
+            --version "$NEW_VERSION" \
+            --report  update-report.md
+
+      - name: Run metadata QA check
+        run: |
+          # Auto-detect whichever XML was just written into baseline/
+          XML=$(ls baseline/*${NEW_VERSION}*Manual-xccdf.xml 2>/dev/null | head -1)
+          if [ -n "$XML" ]; then
+            python3 stig-automation/stig-qa.py "$XML" --controls controls \
+              2>&1 | tee qa-results.txt || true
+          else
+            echo "::warning::Could not find new XML in baseline/ for QA check"
+          fi
+
+      - name: Commit changes
+        run: |
+          git add controls/ baseline/ update-report.md
+          git diff --cached --stat
+          git commit -m "chore: update STIG profile to ${NEW_VERSION}
+
+          Auto-applied metadata updates via stig-automation/apply-stig-update.py.
+          See update-report.md for controls requiring manual review."
+
+      - name: Push branch
+        run: git push origin "$BRANCH"
+
+      - name: Read update report for PR body
+        id: report
+        run: |
+          BODY=$(head -c 60000 update-report.md)
+          echo "body<<EOF" >> $GITHUB_OUTPUT
+          echo "$BODY"     >> $GITHUB_OUTPUT
+          echo "EOF"       >> $GITHUB_OUTPUT
+
+      - name: Create pull request
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const newVer = process.env.NEW_VERSION;
+            const branch = process.env.BRANCH;
+            const report = `${{ steps.report.outputs.body }}`;
+
+            const { data: pr } = await github.rest.pulls.create({
+              owner: context.repo.owner,
+              repo:  context.repo.repo,
+              title: `chore: update STIG profile to ${newVer}`,
+              head:  branch,
+              base:  'main',
+              body:  report,
+              draft: false,
+            });
+
+            const needsReview = report.includes('Require Human Review') ||
+                                 report.includes('Require InSpec Implementation') ||
+                                 report.includes('Confirm Deletion');
+
+            await github.rest.issues.addLabels({
+              owner:        context.repo.owner,
+              repo:         context.repo.repo,
+              issue_number: pr.number,
+              labels:       ['stig-update', 'automated', ...(needsReview ? ['needs-review'] : [])],
+            });
+
+            console.log(`PR created: ${pr.html_url}`);
