@@ -80,9 +80,12 @@ restart the "sssd" service, run the following command:
       expect(service('sssd')).to be_installed.and be_enabled
       expect(sssd_conf_contents.params).to_not be_empty, "SSSD configuration files not found or have no content; files checked:\n\t- #{sssd_conf_files.join("\n\t- ")}"
     end
-    if sssd_conf_contents.params.nil?
-      it 'should configure pam_cert_auth' do
-        expect(sssd_conf_contents.sssd.pam_cert_auth).to eq(true)
+  end
+
+  unless sssd_conf_contents.params.nil? || sssd_conf_contents.params.empty?
+    describe 'SSSD pam_cert_auth' do
+      it 'should be configured to True in the [pam] section' do
+        expect(sssd_conf_contents.pam.pam_cert_auth.to_s.downcase).to eq('true')
       end
     end
   end

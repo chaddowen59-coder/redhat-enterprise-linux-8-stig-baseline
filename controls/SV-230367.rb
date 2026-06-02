@@ -30,14 +30,14 @@ lifetime restriction.
   tag 'host'
   tag 'container'
 
-  value = input('pass_max_days')
+  max_days = input('pass_max_days')
 
-  bad_users = users.where { uid >= 1000 }.where { value > 60 or maxdays.negative? }.usernames
+  bad_users = users.where { uid >= 1000 }.where { maxdays > max_days || maxdays <= 0 }.usernames
   in_scope_users = bad_users - input('exempt_home_users')
 
   describe 'Users are not be able' do
-    it "to retain passwords for more then #{value} day(s)" do
-      failure_message = "The following users can update their password more then every #{value} day(s): #{in_scope_users.join(', ')}"
+    it "to retain passwords for more than #{max_days} day(s)" do
+      failure_message = "The following users can update their password more than every #{max_days} day(s): #{in_scope_users.join(', ')}"
       expect(in_scope_users).to be_empty, failure_message
     end
   end

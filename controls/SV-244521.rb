@@ -29,7 +29,7 @@ $ sudo grub2-mkconfig -o /boot/efi/EFI/redhat/grub.cfg'
   tag severity: 'medium'
   tag gtitle: 'SRG-OS-000080-GPOS-00048'
   tag gid: 'V-244521'
-  tag rid: 'SV-244521r1017327_rule'
+  tag rid: 'SV-244521r1137691_rule'
   tag stig_id: 'RHEL-08-010141'
   tag fix_id: 'F-47753r743811_fix'
   tag cci: ['CCI-000213']
@@ -42,7 +42,9 @@ $ sudo grub2-mkconfig -o /boot/efi/EFI/redhat/grub.cfg'
 
   if file('/sys/firmware/efi').exist?
     describe parse_config_file(input('grub_uefi_main_cfg')) do
-      its('set superusers') { should cmp '"root"' }
+      its('set superusers') { should_not be_nil }
+      its('set superusers') { should_not cmp '""' }
+      its('set superusers') { should_not cmp '"root"' }
     end
   else
     impact 0.0

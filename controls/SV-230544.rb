@@ -64,7 +64,7 @@ $ sudo sysctl --system'
   }
 
   # Define the kernel parameter to be checked
-  parameter = 'net.ipv6.conf.all.accept_redirect'
+  parameter = 'net.ipv6.conf.all.accept_redirects'
   action = 'accepting IPv6 redirects'
   value = 0
 

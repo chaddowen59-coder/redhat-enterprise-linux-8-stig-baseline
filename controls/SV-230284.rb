@@ -25,7 +25,7 @@ $ sudo rm /[path]/[to]/[file]/.shosts'
   tag 'host'
   tag 'container'
 
-  shosts_files = command('find / -xdev -xautofs -name .shosts').stdout.strip.split("\n")
+  shosts_files = command("find / -xdev -xautofs -name '*.shosts'").stdout.strip.split("\n")
 
   describe 'The RHEL8 filesystem' do
     it 'should not have any .shosts files present' do

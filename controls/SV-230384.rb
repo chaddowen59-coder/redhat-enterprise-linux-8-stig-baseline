@@ -53,8 +53,11 @@ environment variables.)
 
     # run the check text's grep against all interactive users, compare any hits to the expected mode
     failing_users = iusers.entries.select { |u|
-      umask_set = command("grep -ir ^umask #{u.home} | grep -v '.bash_history'").stdout.strip
-      umask_set.nil? && umask_set.match(/(?<umask>\d{3,4})/)['umask'].to_i > expected_mode.to_i
+      umask_output = command("grep -ir ^umask #{u.home} | grep -v '.bash_history'").stdout.strip
+      next false if umask_output.empty?
+      match = umask_output.match(/\bumask\s+(\d{3,4})\b/)
+      next false if match.nil?
+      match[1].to_i(8) < expected_mode.to_i(8)
     }.map(&:user)
 
     describe 'All non-exempt interactive users on the system' do

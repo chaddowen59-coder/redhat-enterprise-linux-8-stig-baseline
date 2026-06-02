@@ -47,7 +47,7 @@ logon to the system via a graphical user interface.
   if package('gnome-desktop3').installed?
     if (f = file(custom_conf)).exist?
       describe parse_config_file(custom_conf) do
-        its('daemon.AutomaticLoginEnable') { cmp false }
+        its('daemon.AutomaticLoginEnable') { should cmp false }
       end
     else
       describe f do

@@ -41,7 +41,7 @@ line:
   tag gtitle: 'SRG-OS-000021-GPOS-00005'
   tag satisfies: ['SRG-OS-000021-GPOS-00005', 'SRG-OS-000329-GPOS-00128']
   tag gid: 'V-230337'
-  tag rid: 'SV-230337r1017149_rule'
+  tag rid: 'SV-230337r1134885_rule'
   tag stig_id: 'RHEL-08-020015'
   tag fix_id: 'F-32981r743971_fix'
   tag cci: ['CCI-000044']
@@ -50,14 +50,14 @@ line:
   tag 'container'
 
   message = <<~MESSAGE
-    \n\nThis check only applies to RHEL versions 8.0 or 8.1.\n
+    \n\nThis check only applies to RHEL versions 8.2 or newer.\n
     The system is running RHEL version: #{os.version}, this requirement is Not Applicable.
   MESSAGE
   only_if(message, impact: 0.0) do
-    os.version.minor.between?(0, 1)
+    !os.version.minor.between?(0, 1)
   end
 
   describe parse_config_file('/etc/security/faillock.conf') do
-    its('unlock_time') { should cmp >= input('lockout_time') }
+    its('unlock_time') { should cmp 0 }
   end
 end

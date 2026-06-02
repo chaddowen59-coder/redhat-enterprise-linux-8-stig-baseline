@@ -38,10 +38,18 @@ $ sudo augenrules --load'
   }
 
   describe auditd do
+<<<<<<< HEAD
     its('lines') { should include %r{-w /etc/cron\.d/?} }
   end
 
   describe auditd do
     its('lines') { should include %r{-w /var/spool/cron/?} }
+=======
+    its('lines') { should include %r{-w /etc/cron\.d/? -p wa} }
+  end
+
+  describe auditd do
+    its('lines') { should include %r{-w /var/spool/cron/? -p wa} }
+>>>>>>> a7ae9d6 (cleanup)
   end
 end

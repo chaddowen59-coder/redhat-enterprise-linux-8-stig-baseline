@@ -25,7 +25,7 @@ file or files in the "/etc/sudoers.d" directory.'
   tag gtitle: 'SRG-OS-000373-GPOS-00156'
   tag satisfies: ['SRG-OS-000373-GPOS-00156', 'SRG-OS-000373-GPOS-00157', 'SRG-OS-000373-GPOS-00158']
   tag gid: 'V-230271'
-  tag rid: 'SV-230271r1050789_rule'
+  tag rid: 'SV-230271r1101896_rule'
   tag stig_id: 'RHEL-08-010380'
   tag fix_id: 'F-32915r854025_fix'
   tag cci: ['CCI-002038', 'CCI-004895']
@@ -37,11 +37,9 @@ file or files in the "/etc/sudoers.d" directory.'
     !(virtualization.system.eql?('docker') && !command('sudo').exist?)
   }
 
-  # TODO: figure out why this .where throws an exception if we don't explicitly filter out nils via 'tags.nil?'
-  # ergo shouldn't the filtertable be handling that kind of nil-checking for us?
-  failing_results = sudoers(input('sudoers_config_files').join(' ')).rules.where { tags.nil? && (tags || '').include?('NOPASSWD') }
+  failing_results = sudoers(input('sudoers_config_files').join(' ')).rules.where { !tags.nil? && tags.include?('NOPASSWD') }
 
-  failing_results = failing_results.where { !input('passwordless_admins').include?(users) } if input('passwordless_admins').nil?
+  failing_results = failing_results.where { !input('passwordless_admins').include?(users) } unless input('passwordless_admins').nil?
 
   describe 'Sudoers' do
     it 'should not include any (non-exempt) users with NOPASSWD set' do

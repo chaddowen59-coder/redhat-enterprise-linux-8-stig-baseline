@@ -40,10 +40,13 @@ generator entropy gatherer service with the following command:
     !virtualization.system.eql?('docker')
   }
  
-  if os.version.minor >= 4
+  fips_enabled = file('/proc/sys/crypto/fips_enabled').exist? &&
+                 file('/proc/sys/crypto/fips_enabled').content.strip == '1'
+
+  if os.version.minor >= 4 && fips_enabled
     impact 0.0
-    describe 'This check does not apply to RHEL versions 8.4 or newer' do
-      skip 'This check does not apply to RHEL versions 8.4 or newer'
+    describe 'This check does not apply to RHEL 8.4+ with kernel FIPS mode enabled' do
+      skip 'This check does not apply to RHEL 8.4+ with kernel FIPS mode enabled (per RHEL-08-010020)'
     end
   else
     describe package('rng-tools') do

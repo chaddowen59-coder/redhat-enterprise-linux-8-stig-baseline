@@ -29,9 +29,9 @@ file:
   tag severity: 'high'
   tag gtitle: 'SRG-OS-000480-GPOS-00227'
   tag gid: 'V-230531'
-  tag rid: 'SV-230531r1017292_rule'
+  tag rid: 'SV-230531r1155396_rule'
   tag stig_id: 'RHEL-08-040172'
-  tag fix_id: 'F-33175r1017291_fix'
+  tag fix_id: 'F-33175r1155395_fix'
   tag cci: ['CCI-000366']
   tag nist: ['CM-6 b']
   tag 'host'

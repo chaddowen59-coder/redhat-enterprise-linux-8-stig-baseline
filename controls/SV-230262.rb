@@ -27,9 +27,9 @@ group-owned by "root".
   tag severity: 'medium'
   tag gtitle: 'SRG-OS-000259-GPOS-00100'
   tag gid: 'V-230262'
-  tag rid: 'SV-230262r1017082_rule'
+  tag rid: 'SV-230262r1155384_rule'
   tag stig_id: 'RHEL-08-010350'
-  tag fix_id: 'F-32906r567533_fix'
+  tag fix_id: 'F-32906r1101893_fix'
   tag cci: ['CCI-001499']
   tag nist: ['CM-5 (6)']
   tag 'host'

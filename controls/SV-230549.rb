@@ -45,9 +45,9 @@ $ sudo sysctl --system'
   tag severity: 'medium'
   tag gtitle: 'SRG-OS-000480-GPOS-00227'
   tag gid: 'V-230549'
-  tag rid: 'SV-230549r1017311_rule'
+  tag rid: 'SV-230549r1184286_rule'
   tag stig_id: 'RHEL-08-040285'
-  tag fix_id: 'F-33193r858829_fix'
+  tag fix_id: 'F-33193r1184285_fix'
   tag cci: ['CCI-000366']
   tag nist: ['CM-6 b']
   tag 'host'

@@ -44,9 +44,9 @@ a keyboard or mouse'
   tag severity: 'medium'
   tag gtitle: 'SRG-OS-000378-GPOS-00163'
   tag gid: 'V-230524'
-  tag rid: 'SV-230524r1014813_rule'
+  tag rid: 'SV-230524r1155418_rule'
   tag stig_id: 'RHEL-08-040140'
-  tag fix_id: 'F-33168r744025_fix'
+  tag fix_id: 'F-33168r1155417_fix'
   tag cci: ['CCI-001958']
   tag nist: ['IA-3']
   tag 'host'

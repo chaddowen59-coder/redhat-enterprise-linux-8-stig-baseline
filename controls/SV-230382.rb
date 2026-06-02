@@ -31,11 +31,11 @@ effect.'
   tag severity: 'medium'
   tag gtitle: 'SRG-OS-000480-GPOS-00227'
   tag gid: 'V-230382'
-  tag rid: 'SV-230382r991589_rule'
+  tag rid: 'SV-230382r1069309_rule'
   tag stig_id: 'RHEL-08-020350'
   tag fix_id: 'F-33026r567893_fix'
-  tag cci: ['CCI-000366', 'CCI-000052']
-  tag nist: ['CM-6 b', 'AC-9']
+  tag cci: ['CCI-000052']
+  tag nist: ['AC-9']
   tag 'host'
   tag 'container-conditional'
 

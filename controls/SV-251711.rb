@@ -54,7 +54,7 @@ control 'SV-251711' do
   tag 'container-conditional'
 
   only_if('Control not applicable within a container without sudo enabled', impact: 0.0) do
-    virtualization.system.eql?('docker') && !command('sudo').exist?
+    !(virtualization.system.eql?('docker') && !command('sudo').exist?)
   end
 
   if command('grep include /etc/sudoers').stdout.empty?

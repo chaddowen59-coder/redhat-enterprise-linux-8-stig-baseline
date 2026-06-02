@@ -24,14 +24,14 @@ To manually update the ciphers in the systemwide SSH configuration, use the foll
 $ sudo sed -i -E 's/(-oCiphers=)[^ ]*/\1aes256-gcm@openssh.com,aes128-gcm@openssh.com,aes256-ctr,aes128-ctr/' "$(readlink -f /etc/crypto-policies/back-ends/opensshserver.config)"
 
 A reboot is required for the changes to take effect.)
-  impact 0.5
-  tag severity: 'medium'
+  impact 0.7
+  tag severity: 'high'
   tag gtitle: 'SRG-OS-000250-GPOS-00093'
   tag satisfies: ['SRG-OS-000250-GPOS-00093', 'SRG-OS-000393-GPOS-00173', 'SRG-OS-000394-GPOS-00174', 'SRG-OS-000125-GPOS-00065']
   tag gid: 'V-230252'
-  tag rid: 'SV-230252r1044817_rule'
+  tag rid: 'SV-230252r1184241_rule'
   tag stig_id: 'RHEL-08-010291'
-  tag fix_id: 'F-32896r1044816_fix'
+  tag fix_id: 'F-32896r1155363_fix'
   tag cci: ['CCI-001453']
   tag nist: ['AC-17 (2)']
   tag 'host'

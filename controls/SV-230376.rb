@@ -34,7 +34,7 @@ offline_credentials_expiration = 1'
   tag severity: 'medium'
   tag gtitle: 'SRG-OS-000383-GPOS-00166'
   tag gid: 'V-230376'
-  tag rid: 'SV-230376r958828_rule'
+  tag rid: 'SV-230376r1069307_rule'
   tag stig_id: 'RHEL-08-020290'
   tag fix_id: 'F-33020r942947_fix'
   tag cci: ['CCI-002007']
@@ -47,11 +47,10 @@ offline_credentials_expiration = 1'
     !virtualization.system.eql?('docker')
   }
 
-  if input('smart_card_enabled')
+  if !input('smart_card_enabled')
     impact 0.0
     describe 'The system is not utilizing smart card authentication' do
-      skip 'The system is not utilizing smart card authentication, this control
-      is Not Applicable.'
+      skip 'The system is not utilizing smart card authentication, this control is Not Applicable.'
     end
   else
     describe.one do

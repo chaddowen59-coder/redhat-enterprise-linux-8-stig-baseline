@@ -64,9 +64,9 @@ file should be created under the appropriate subdirectory.
   tag gtitle: 'SRG-OS-000029-GPOS-00010'
   tag satisfies: ['SRG-OS-000029-GPOS-00010', 'SRG-OS-000031-GPOS-00012', 'SRG-OS-000480-GPOS-00227']
   tag gid: 'V-244539'
-  tag rid: 'SV-244539r1017346_rule'
+  tag rid: 'SV-244539r1069325_rule'
   tag stig_id: 'RHEL-08-020082'
-  tag fix_id: 'F-47771r743865_fix'
+  tag fix_id: 'F-47771r1069259_fix'
   tag cci: ['CCI-000057']
   tag nist: ['AC-11 a']
   tag 'host'

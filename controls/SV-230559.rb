@@ -31,7 +31,7 @@ or remove it from the system with the following command:
   tag severity: 'medium'
   tag gtitle: 'SRG-OS-000480-GPOS-00227'
   tag gid: 'V-230559'
-  tag rid: 'SV-230559r1014820_rule'
+  tag rid: 'SV-230559r1155398_rule'
   tag stig_id: 'RHEL-08-040370'
   tag fix_id: 'F-33203r568424_fix'
   tag cci: ['CCI-000381']

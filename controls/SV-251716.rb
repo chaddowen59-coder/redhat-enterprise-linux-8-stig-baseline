@@ -36,10 +36,10 @@ Remove any configurations that conflict with the above value.'
   tag check_id: 'C-55153r858735_chk'
   tag severity: 'medium'
   tag gid: 'V-251716'
-  tag rid: 'SV-251716r1017369_rule'
+  tag rid: 'SV-251716r1069329_rule'
   tag stig_id: 'RHEL-08-020104'
   tag gtitle: 'SRG-OS-000480-GPOS-00227'
-  tag fix_id: 'F-55107r858736_fix'
+  tag fix_id: 'F-55107r1069268_fix'
   tag 'documentable'
   tag cci: ['CCI-000366']
   tag nist: ['CM-6 b']
@@ -52,6 +52,7 @@ Remove any configurations that conflict with the above value.'
 
   describe 'System pwquality setting' do
     subject { parse_config(command('grep -rh retry /etc/security/pwquality.conf*').stdout.strip) }
-    its('retry') { should cmp >= input('min_retry') }
+    its('retry') { should cmp >= 1 }
+    its('retry') { should cmp <= 3 }
   end
 end

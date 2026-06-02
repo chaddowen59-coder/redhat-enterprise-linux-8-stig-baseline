@@ -31,9 +31,9 @@ documented with the ISSO.'
   tag severity: 'medium'
   tag gtitle: 'SRG-OS-000114-GPOS-00059'
   tag gid: 'V-230502'
-  tag rid: 'SV-230502r1017284_rule'
+  tag rid: 'SV-230502r1155393_rule'
   tag stig_id: 'RHEL-08-040070'
-  tag fix_id: 'F-33146r568253_fix'
+  tag fix_id: 'F-33146r1155392_fix'
   tag cci: ['CCI-000778']
   tag nist: ['IA-3']
   tag 'host'

@@ -24,14 +24,14 @@ To manually update the MACs in the systemwide SSH configuration, use the followi
 $ sudo sed -i -E 's/(-oMACs=)[^ ]*/\1hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com,hmac-sha2-512,hmac-sha2-256/' "$(readlink -f /etc/crypto-policies/back-ends/opensshserver.config)"
 
 A reboot is required for the changes to take effect.)
-  impact 0.5
-  tag severity: 'medium'
+  impact 0.7
+  tag severity: 'high'
   tag gtitle: 'SRG-OS-000250-GPOS-00093'
   tag satisfies: ['SRG-OS-000250-GPOS-00093', 'SRG-OS-000393-GPOS-00173', 'SRG-OS-000394-GPOS-00174', 'SRG-OS-000125-GPOS-00065']
   tag gid: 'V-230251'
-  tag rid: 'SV-230251r1044814_rule'
+  tag rid: 'SV-230251r1184240_rule'
   tag stig_id: 'RHEL-08-010290'
-  tag fix_id: 'F-32895r1044813_fix'
+  tag fix_id: 'F-32895r1155369_fix'
   tag cci: ['CCI-001453']
   tag nist: ['AC-17 (2)']
   tag 'host'

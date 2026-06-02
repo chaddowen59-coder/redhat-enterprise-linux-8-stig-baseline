@@ -54,7 +54,7 @@ program and the PPSM CAL."
   tag severity: 'medium'
   tag gtitle: 'SRG-OS-000096-GPOS-00050'
   tag gid: 'V-230500'
-  tag rid: 'SV-230500r1017283_rule'
+  tag rid: 'SV-230500r1101900_rule'
   tag stig_id: 'RHEL-08-040030'
   tag fix_id: 'F-33144r568247_fix'
   tag cci: ['CCI-000382']

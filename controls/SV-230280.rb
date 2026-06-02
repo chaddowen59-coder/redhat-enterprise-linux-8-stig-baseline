@@ -63,4 +63,15 @@ $ sudo sysctl --system'
   describe kernel_parameter('kernel.randomize_va_space') do
     its('value') { should eq 2 }
   end
+
+  k_conf_files = input('kernel_config_files')
+  k_conf = command("grep -r kernel.randomize_va_space #{k_conf_files.join(' ')}").stdout.split("\n")
+  failing_k_conf = k_conf.reject { |k| k.match(/kernel\.randomize_va_space\s*=\s*2/) }
+
+  describe 'Kernel config files' do
+    it "should set 'kernel.randomize_va_space' on startup" do
+      expect(k_conf).to_not be_empty, "Setting not found in any of the following config files:\n\t- #{k_conf_files.join("\n\t- ")}"
+      expect(failing_k_conf).to be_empty, "Incorrect or conflicting settings found:\n\t- #{failing_k_conf.join("\n\t- ")}" unless k_conf.empty?
+    end
+  end
 end

@@ -40,8 +40,8 @@ the required value):
 
   describe "/etc/login.defs does not have `#{setting}` configured" do
     let(:config) { login_defs.read_params[setting] }
-    it "greater than #{value} day" do
-      expect(config).to cmp <= value
+    it "at least #{value} day" do
+      expect(config).to cmp >= value
     end
   end
 end

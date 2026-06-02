@@ -42,7 +42,7 @@ control 'SV-230374' do
   tag severity: 'medium'
   tag gtitle: 'SRG-OS-000123-GPOS-00064'
   tag gid: 'V-230374'
-  tag rid: 'SV-230374r1017186_rule'
+  tag rid: 'SV-230374r1069293_rule'
   tag stig_id: 'RHEL-08-020270'
   tag fix_id: 'F-33018r902730_fix'
   tag cci: ['CCI-001682']
@@ -65,16 +65,28 @@ control 'SV-230374' do
     # user has to specify what the tmp accounts are, so we will print a different pass message
     # if none of those tmp accounts even exist on the system for clarity
     tmp_users_existing = tmp_users.select { |u| user(u).exists? }
-    failing_users = tmp_users_existing.select { |u| user(u).warndays > tmp_max_days }
+    failing_users = tmp_users_existing.select do |u|
+      expiry_raw = command("chage -l #{u} | grep -i 'Account expires'").stdout
+      expiry_match = expiry_raw.match(/Account expires\s*:\s*(.+)/i)
+      if expiry_match.nil? || expiry_match[1].strip.downcase == 'never'
+        true
+      else
+        begin
+          (Date.parse(expiry_match[1].strip) - Date.today).to_i > tmp_max_days
+        rescue ArgumentError
+          true
+        end
+      end
+    end
 
     describe 'Temporary accounts' do
-      if tmp_users_existing.nil?
-        it "should have expiration times less than or equal to '#{tmp_max_days}' days" do
-          expect(failing_users).to be_empty, "Failing users:\n\t- #{failing_users.join("\n\t- ")}"
-        end
-      else
+      if tmp_users_existing.empty?
         it "(input as '#{tmp_users.join("', '")}') were not found on this system" do
           expect(tmp_users_existing).to be_empty
+        end
+      else
+        it "should have account expiration within #{tmp_max_days} days" do
+          expect(failing_users).to be_empty, "Failing users:\n\t- #{failing_users.join("\n\t- ")}"
         end
       end
     end

@@ -47,9 +47,9 @@ $ sudo sysctl --system'
   tag severity: 'medium'
   tag gtitle: 'SRG-OS-000480-GPOS-00227'
   tag gid: 'V-230311'
-  tag rid: 'SV-230311r1017121_rule'
+  tag rid: 'SV-230311r1155408_rule'
   tag stig_id: 'RHEL-08-010671'
-  tag fix_id: 'F-32955r858768_fix'
+  tag fix_id: 'F-32955r1155407_fix'
   tag cci: ['CCI-000366']
   tag legacy: []
   tag nist: ['CM-6 b']
@@ -72,12 +72,12 @@ $ sudo sysctl --system'
   k_conf = command("grep -r #{kernel_setting} #{k_conf_files.join(' ')}").stdout.split("\n")
 
   # make sure it is set correctly
-  failing_k_conf = k_conf.reject { |k| k.match(/#{kernel_parameter}\s*=\s*#{kernel_expected_value}/) }
+  failing_k_conf = k_conf.reject { |k| k.match(/#{Regexp.escape(kernel_setting)}\s*=\s*#{Regexp.escape(kernel_expected_value)}/) }
 
   describe 'Kernel config files' do
     it "should set '#{kernel_setting}' on startup" do
       expect(k_conf).to_not be_empty, "Setting not found in any of the following config files:\n\t- #{k_conf_files.join("\n\t- ")}"
-      expect(failing_k_conf).to be_empty, "Incorrect or conflicting settings found:\n\t- #{failing_k_conf.join("\n\t- ")}" if k_conf.nil?
+      expect(failing_k_conf).to be_empty, "Incorrect or conflicting settings found:\n\t- #{failing_k_conf.join("\n\t- ")}" unless k_conf.empty?
     end
   end
 end
