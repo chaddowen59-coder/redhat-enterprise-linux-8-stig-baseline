@@ -50,7 +50,7 @@ jobs:
 
       - name: Get commit message
         id: commit
-        run: echo "::set-output name=message::$(git log --format=%B -n 1 ${{ github.sha }})"
+        run: echo "message=$(git log --format=%B -n 1 ${{ github.sha }})" >> $GITHUB_OUTPUT
 
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
